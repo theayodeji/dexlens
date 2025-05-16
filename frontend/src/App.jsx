@@ -1,11 +1,26 @@
 import React from 'react'
 import './global.css'
+import { Route, Routes } from 'react-router-dom'
+import Home from './pages/Home';
+import Token from './pages/Token';
+import Watchlist from './pages/Watchlist';
+import Settings from './pages/Settings';
+import SignUp from './pages/SignUp';
+import MainLayout from './layouts/MainLayout';
 
 function App() {
 
   return (
     <>
-      <h1>DexLens</h1>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="token" element={<Token />} />
+          <Route path="watchlist" element={<Watchlist />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="signup" element={<SignUp />} />
+        </Route>
+      </Routes>
     </>
   )
 }
