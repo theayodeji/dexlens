@@ -4,3 +4,14 @@
 body{
   font-family: 'DM Sans', sans-serif;
 }
+@media (max-width: 500px) {
+  #tradingview_chart > div{
+    height: 55vh !important;
+  }
+}
+@media (min-width: 500px) {
+  #tradingview_chart > div{
+    height: 60vh !important;
+    min-height: 500px !important;
+  }
+}

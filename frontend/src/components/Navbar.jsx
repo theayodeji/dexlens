@@ -17,7 +17,7 @@ const Navbar = () => {
         </div>
         {/* Mobile Menu */}
         {menuOpen && (
-          <div className="absolute top-full left-0 w-full bg-gray-900 shadow-md md:hidden z-10">
+          <div className="absolute top-full left-0 w-full shadow-md md:hidden z-10">
             <NavbarLinks />
           </div>
         )}
