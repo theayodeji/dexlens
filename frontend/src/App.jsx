@@ -7,6 +7,7 @@ import Watchlist from './pages/Watchlist';
 import Settings from './pages/Settings';
 import SignUp from './pages/SignUp';
 import MainLayout from './layouts/MainLayout';
+import AllTokensPage from './pages/AllTokens';
 
 function App() {
 
@@ -15,7 +16,8 @@ function App() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
-          <Route path="/token/:id" element={<TokenPage />} />
+          <Route path="/tokens" element={<AllTokensPage />} />
+          <Route path="/tokens/:id" element={<TokenPage />} />
           <Route path="/watchlist" element={<Watchlist />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/signup" element={<SignUp />} />

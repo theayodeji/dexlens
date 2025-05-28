@@ -15,7 +15,7 @@ const Trending = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-gray-800">Trending</h2>
         <a
-          href="/all-tokens"
+          href="/tokens"
           className="text-blue-500 hover:underline text-sm font-medium"
         >
           <IoMdArrowDropright className='inline'/>

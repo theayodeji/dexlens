@@ -6,6 +6,8 @@ import TokenTab from "../components/TokenTab";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { fetchTokenById } from '../lib/api';
 
 const TokenPage = () => {
   const { id } = useParams();
@@ -15,8 +17,7 @@ const TokenPage = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(`http://localhost:5000/api/tokens/${id}`)
-      .then((res) => res.json())
+    fetchTokenById(id)
       .then((data) => {
         setCoinInfo(data);
         setIsLoading(false);
@@ -25,30 +26,11 @@ const TokenPage = () => {
         console.error("Failed to fetch info:", err);
         setIsLoading(false);
       });
-  }, []);
+  }, [id]);
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 text-4xl p-4">
-      <span className="animate-spin text-blue-500">
-        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24">
-        <circle
-          className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          strokeWidth="4"
-        ></circle>
-        <path
-          className="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-        ></path>
-        </svg>
-      </span>
-      Loading...
-      </div>
+      <LoadingSpinner />
     );
   }
 

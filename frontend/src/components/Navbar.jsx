@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <header>
       <nav className="flex items-center px-6 py-6 text-black relative w-full">
-        <h1 className="text-2xl font-bold tracking-tight">🔍 Dex<span className='text-blue-600'>Lens</span></h1>
+        <h1 className="text-2xl font-bold tracking-tight">🔍 Coin<span className='text-blue-600'>Lens</span></h1>
         {/* Burger Icon */}
         <Burger open={menuOpen} onClick={() => setMenuOpen((open) => !open)} />
         {/* Desktop Menu */}
