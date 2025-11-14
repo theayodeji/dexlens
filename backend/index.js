@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import { config } from "dotenv";
 import { connect } from "mongoose";
 import tokenRoutes from './routes/tokenRoutes.js';
+import { startCoinDataScheduler } from './services/coinDataService.js';
 
 // Load environment variables from .env file
 config();
@@ -28,6 +29,9 @@ app.use(
 //     .then(() => console.log('Connected to MongoDB'))
 //     .catch((err) => console.error('MongoDB connection error:', err));
 
+// Start coin data refresh scheduler (initial load + interval)
+startCoinDataScheduler();
+
 // Basic route
 app.get('/', (req, res) => {
   res.send('Welcome to the DexLens backend!');
@@ -38,5 +42,5 @@ app.use('/api/tokens', tokenRoutes);
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(` Server is running on http://localhost:${PORT}`);
 });

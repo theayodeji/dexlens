@@ -8,11 +8,12 @@ import Settings from './pages/Settings';
 import SignUp from './pages/SignUp';
 import MainLayout from './layouts/MainLayout';
 import AllTokensPage from './pages/AllTokens';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
-
+const queryClient = new QueryClient();
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
@@ -23,7 +24,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
         </Route>
       </Routes>
-    </>
+    </QueryClientProvider>
   )
 }
 

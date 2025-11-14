@@ -1,69 +1,55 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import TokenList from "../components/TokenList";
 import NewsSidebar from "../components/NewsSidebar";
-import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorComponent from "../components/ErrorComponent";
 import SearchBar from "../components/SearchBar";
-import { fetchTokens, searchTokens } from "../lib/api";
 import LoadingSpinner2 from "../components/LoadingSpinner2";
+import useTokenQuery from "../hooks/useTokenQuery";
+import useTokenSearchQuery from "../hooks/useTokenSearchQuery";
 
 const AllTokensPage = () => {
-  const [tokens, setTokens] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
 
-  // Load paginated tokens
-  const loadTokens = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setHasError(false);
-      setErrorMessage("");
+  const { tokens, isLoadingTokens, tokensError, page, setPage } =
+    useTokenQuery();
 
-      const data = await fetchTokens(page, 50);
-      setTokens(data);
-    } catch (error) {
-      setHasError(true);
-      setErrorMessage(error.message || "Failed to load tokens.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [page]);
+  const { mutate, searchResults, isLoadingSearchResults} =
+    useTokenSearchQuery(searchQuery);
 
-  // Handle search (manual trigger from button)
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setPage(1);
-      loadTokens();
       return;
     }
 
     try {
-      setIsSearching(true);
       setHasError(false);
       setErrorMessage("");
 
-      const data = await searchTokens(searchQuery.trim());
-      setTokens(data || []);
+      mutate(searchQuery.trim());
       setPage(1);
     } catch (error) {
+      console.error(error);
       setHasError(true);
       setErrorMessage("Failed to search tokens. Please try again.");
-      setTokens([]);
-    } finally {
-      setIsSearching(false);
     }
   };
 
-  // Load tokens when query is empty or page changes
   useEffect(() => {
     if (!searchQuery.trim()) {
-      loadTokens();
+      setPage(1);
     }
-  }, [page, searchQuery, loadTokens]);
+  }, [searchQuery, setPage]);
+
+  if (isLoadingTokens) {
+    return <LoadingSpinner2 />;
+  }
+
+  if (tokensError) {
+    return <ErrorComponent message={tokensError.message} />;
+  }
 
   const handleNextPage = () => {
     if (!searchQuery.trim()) {
@@ -97,9 +83,7 @@ const AllTokensPage = () => {
           </div>
 
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">
-              Cryptocurrencies
-            </h1>
+            <h1 className="text-2xl font-bold">Cryptocurrencies</h1>
             {searchQuery && (
               <button
                 onClick={handleClearSearch}
@@ -110,16 +94,19 @@ const AllTokensPage = () => {
             )}
           </div>
 
-          {isLoading || isSearching ? (
+          {isLoadingTokens || isLoadingSearchResults ? (
             <LoadingSpinner2 />
           ) : hasError ? (
-            <ErrorComponent
-              message={errorMessage}
-              onRetry={handleSearch}
-            />
+            <ErrorComponent message={errorMessage} onRetry={handleSearch} />
           ) : (
             <>
-              <TokenList tokens={tokens} />
+              <TokenList
+                tokens={
+                  searchQuery && searchResults && !isLoadingSearchResults
+                    ? searchResults
+                    : tokens
+                }
+              />
 
               {!searchQuery && (
                 <div className="flex justify-between items-center mt-6">
@@ -144,12 +131,15 @@ const AllTokensPage = () => {
 
               <div className="mt-4 text-center text-gray-600">
                 {searchQuery ? (
-                  tokens.length > 0 ? (
+                  searchResults?.length > 0 ? (
                     <p>
-                      {tokens.length} result{tokens.length !== 1 ? "s" : ""} found for "{searchQuery}"
+                      {searchResults.length} result{searchResults.length !== 1 ? "s" : ""}{" "}
+                      found for "{searchQuery}"
                     </p>
                   ) : (
-                    <p>No tokens found for "{searchQuery}". Try another search.</p>
+                    <p>
+                      No tokens found for "{searchQuery}". Try another search.
+                    </p>
                   )
                 ) : (
                   <p>Showing page {page} of cryptocurrencies</p>

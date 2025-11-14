@@ -1,55 +1,40 @@
 // Controller to handle token-related logic
 
 import axios from "axios";
-
-let coinsCache = []; // Cache for market data
-let coinsListCache = []; // Cache for full coins list
-
-// Function to refresh market data and coins list
-const refreshCoinData = async () => {
-  try {
-    // Fetch top 250 coins by market cap
-    const marketRes = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
-      params: {
-        vs_currency: 'usd',
-        order: 'market_cap_desc',
-        per_page: 250,
-        page: 1,
-      },
-    });
-    coinsCache = marketRes.data;
-
-    // Fetch full coins list
-    const listRes = await axios.get('https://api.coingecko.com/api/v3/coins/list');
-    coinsListCache = listRes.data;
-  } catch (e) {
-    console.error('Error refreshing coin data:', e.message);
-  }
-};
-
-// Refresh every 20 minutes
-setInterval(refreshCoinData, 20 * 60 * 1000);
-refreshCoinData(); // Initial load
+import { getCoinsCache, getCoinsListCache } from "../services/coinDataService.js";
 
 // Get all tokens
 export const getAllTokens = async (req, res) => {
   const { page = 1, per_page = 50 } = req.query;
 
+  const pageNum = Number.parseInt(page, 10) || 1;
+  const perPageNum = Math.min(250, Number.parseInt(per_page, 10) || 50);
+  const startIdx = (pageNum - 1) * perPageNum;
+  const endIdx = startIdx + perPageNum;
+
   try {
+    const cache = getCoinsCache();
+
+    if (Array.isArray(cache) && cache.length > 0) {
+      const paged = cache.slice(startIdx, endIdx);
+      return res.status(200).json(paged);
+    }
+
+    // Fallback to live API if cache is empty (e.g., on cold start)
     const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
       params: {
         vs_currency: 'usd',
         order: 'market_cap_desc',
-        per_page,
-        page,
+        per_page: perPageNum,
+        page: pageNum,
         sparkline: false,
       },
     });
 
-    res.status(200).json(response.data);
+    return res.status(200).json(response.data);
   } catch (error) {
-    console.error('Error fetching tokens:', error);
-    res.status(500).json({ error: 'Failed to fetch tokens' });
+    console.error('Error fetching tokens:', error.message || error);
+    return res.status(500).json({ error: 'Failed to fetch tokens' });
   }
 };
 
@@ -69,6 +54,9 @@ export const searchTokens = async (req, res) => {
   if (!lowered) {
     return res.json([]);
   }
+
+  const coinsListCache = getCoinsListCache();
+  const coinsCache = getCoinsCache();
 
   const matchedCoins = coinsListCache
     .filter((coin) =>

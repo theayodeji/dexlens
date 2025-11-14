@@ -5,7 +5,7 @@ const navLinks = [
   { to: '/', label: 'Home', end: true },
   { to: '/watchlist', label: 'Watchlist' },
   { to: '/nfts', label: 'NFTs' },
-  { to: '/learn', label: 'Learn' },
+  { to: '/tokens', label: 'Tokens' },
   { to: '/settings', label: 'Settings' },
 ];
 

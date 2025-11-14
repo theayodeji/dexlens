@@ -2,6 +2,7 @@
 import TokenCard from './TokenCard';
 
 const TokenList = ({ tokens }) => {
+  if(!tokens) return <>Nothing</>;
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-4 items-center p-4 bg-gray-100 rounded-lg font-semibold">

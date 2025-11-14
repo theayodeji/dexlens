@@ -1,4 +1,3 @@
-import { useState } from 'react';
 
 const SearchBar = ({ searchQuery, setSearchQuery, onSearch }) => {
   const handleInputChange = (e) => {
