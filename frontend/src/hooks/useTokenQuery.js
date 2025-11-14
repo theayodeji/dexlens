@@ -10,6 +10,8 @@ export default function useTokenQuery(id, query) {
     const {data: tokens, isLoading: isLoadingTokens, error: tokensError} = useQuery({
         queryKey: ['tokens', page, perPage],
         queryFn: () => fetchTokens(page, perPage),
+        retry: 1,
+        retryDelay: 2000,
         onSuccess: (data) => {
             console.log(data)
         }
@@ -18,13 +20,17 @@ export default function useTokenQuery(id, query) {
     const {data: token, isLoading: isLoadingToken, error: tokenError} = useQuery({
         queryKey: ['token', id],
         queryFn: () => fetchTokenById(id),
-        enabled: !!id || !!query
+        enabled: !!id || !!query,
+        retry: 1,
+        retryDelay: 2000,
     })
 
     const {data: searchTokens, isLoading: isLoadingSearchTokens, error: searchTokensError} = useQuery({
         queryKey: ['searchTokens', query],
         queryFn: () => searchTokens(query),
-        enabled: !!query
+        enabled: !!query,
+        retry: 1,
+        retryDelay: 2000,
     })
 
     return useMemo(() => {

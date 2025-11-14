@@ -11,7 +11,14 @@ import AllTokensPage from './pages/AllTokens';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: 1,
+            retryDelay: 2000,
+        }
+    }
+});
   return (
     <QueryClientProvider client={queryClient}>
       <Routes>

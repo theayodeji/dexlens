@@ -20,18 +20,18 @@ export const getAllTokens = async (req, res) => {
       return res.status(200).json(paged);
     }
 
-    // Fallback to live API if cache is empty (e.g., on cold start)
-    const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
-      params: {
-        vs_currency: 'usd',
-        order: 'market_cap_desc',
-        per_page: perPageNum,
-        page: pageNum,
-        sparkline: false,
-      },
-    });
+    // // Fallback to live API if cache is empty (e.g., on cold start)
+    // const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
+    //   params: {
+    //     vs_currency: 'usd',
+    //     order: 'market_cap_desc',
+    //     per_page: perPageNum,
+    //     page: pageNum,
+    //     sparkline: false,
+    //   },
+    // });
 
-    return res.status(200).json(response.data);
+    // return res.status(200).json(response.data);
   } catch (error) {
     console.error('Error fetching tokens:', error.message || error);
     return res.status(500).json({ error: 'Failed to fetch tokens' });
