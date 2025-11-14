@@ -3,8 +3,8 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { config } from "dotenv";
 import { connect } from "mongoose";
-import tokenRoutes from './routes/tokenRoutes.js';
-import { startCoinDataScheduler } from './services/coinDataService.js';
+import tokenRoutes from "./routes/tokenRoutes.js";
+import { startCoinDataScheduler } from "./services/coinDataService.js";
 
 // Load environment variables from .env file
 config();
@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: process.env.CORS_URL }));
 app.use(cookieParser());
 app.use(
   json({
@@ -33,12 +33,12 @@ app.use(
 startCoinDataScheduler();
 
 // Basic route
-app.get('/', (req, res) => {
-  res.send('Welcome to the DexLens backend!');
+app.get("/", (req, res) => {
+  res.send("Welcome to the DexLens backend!");
 });
 
 // Token routes
-app.use('/api/tokens', tokenRoutes);
+app.use("/api/tokens", tokenRoutes);
 
 // Start the server
 app.listen(PORT, () => {
